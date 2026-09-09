@@ -5,7 +5,7 @@ A small FastAPI service that authenticates to Gmail with OAuth 2.0 and processes
 ## Repository Structure
 
 ```text
-python/
+suggestions-ingester/
 ├── app/
 │   ├── infrastructure/
 │   │   ├── auth/             Google OAuth and token-store adapters
@@ -26,14 +26,14 @@ python/
 └── run_local.sh               Local startup script
 ```
 
-The `python/schemas/buf.yaml` file declares `python/schemas` as the Buf module root. Therefore `python/schemas/email/notifications/v1/new_email.proto` correctly maps to the package `email.notifications.v1`. Run Buf commands from `python/schemas`.
+The `suggestions-ingester/schemas/buf.yaml` file declares `suggestions-ingester/schemas` as the Buf module root. Therefore `suggestions-ingester/schemas/email/notifications/v1/new_email.proto` correctly maps to the package `email.notifications.v1`. Run Buf commands from `suggestions-ingester/schemas`.
 
 ## Architecture
 
 The backend uses provider-neutral service contracts implemented by infrastructure adapters:
 
 ```text
-python/app/
+suggestions-ingester/app/
    services/        OAuth, token-store, and Pub/Sub contracts
    infrastructure/ Google OAuth, Gmail, and configuration adapters
    ports/           FastAPI HTTP routes and response mapping
@@ -61,13 +61,13 @@ The Gmail watch expires and must be renewed periodically. The startup flow uses 
 
 ## Local setup
 
-The local setup expects these files under `python/app/resources/`:
+The local setup expects these files under `suggestions-ingester/app/resources/`:
 
 - `google-client-secret.json`: the OAuth client configuration downloaded from Google Cloud.
 - `gmail-lewis-secret.json`: the authorized-user token JSON for the Gmail account the service should use.
 - `maintenance-password.txt`: the maintenance password used to protect the OAuth endpoints.
 
-The entire `python/app/resources/` directory is ignored by Git. Keep both files local and never commit their contents. The token file contains a refresh token and provides background access after OAuth authorization.
+The entire `suggestions-ingester/app/resources/` directory is ignored by Git. Keep both files local and never commit their contents. The token file contains a refresh token and provides background access after OAuth authorization.
 
 Set `MAINTENANCE_PASSWORD` in `.env` to protect the OAuth maintenance endpoints. The optional `MAINTENANCE_USERNAME` defaults to `maintenance`. Both `/auth/start` and `/auth/callback` require HTTP Basic authentication; use the same credentials for the Google redirect callback.
 
@@ -76,7 +76,7 @@ Set `MAINTENANCE_PASSWORD` in `.env` to protect the OAuth maintenance endpoints.
 3. Create a virtual environment and install dependencies:
 
    ```bash
-   cd python
+   cd suggestions-ingester
    python -m venv .venv
    source .venv/bin/activate
    pip install -r requirements.txt
@@ -106,7 +106,7 @@ Both endpoints require HTTP Basic authentication using `MAINTENANCE_USERNAME` an
 From the repository root, start the local application with:
 
 ```bash
-./python/run_local.sh
+./suggestions-ingester/run_local.sh
 ```
 
 Run tests with:
@@ -122,11 +122,11 @@ Cloud Run has a generous always-free allowance for small services. It is statele
 ```bash
 gcloud secrets create google-client-secret \
    --replication-policy=automatic \
-   --data-file=python/app/resources/google-client-secret.json
+   --data-file=suggestions-ingester/app/resources/google-client-secret.json
 
 gcloud secrets create gmail-lewis-secret \
    --replication-policy=automatic \
-   --data-file=python/app/resources/gmail-lewis-secret.json
+   --data-file=suggestions-ingester/app/resources/gmail-lewis-secret.json
 
 # Create a strong password locally, then store it in Secret Manager:
 openssl rand -base64 32 > /tmp/maintenance-password.txt
@@ -137,7 +137,7 @@ gcloud secrets create maintenance-password \
 # Deploy with all three secrets:
 
 gcloud run deploy suggestion-box \
-   --source python \
+   --source suggestions-ingester \
    --region northamerica-northeast1 \
    --set-env-vars GOOGLE_REDIRECT_URI=https://suggestion-box-318780185428.northamerica-northeast1.run.app/auth/callback,GOOGLE_PUBSUB_TOPIC=projects/suggestion-box-508020/topics/new-email \
    --set-secrets GOOGLE_CLIENT_SECRET_JSON=google-client-secret:latest,GMAIL_TOKEN_JSON=gmail-lewis-secret:latest,MAINTENANCE_PASSWORD=maintenance-password:latest
