@@ -1,0 +1,32 @@
+from typing import Any
+
+from fastapi import APIRouter, HTTPException
+from app.services.pubsub import PushHandler
+
+
+def create_router(
+    pubsub_delivery_handler: PushHandler,
+) -> APIRouter:
+    router = APIRouter()
+
+    @router.get("/health")
+    def health() -> dict[str, str]:
+        return {"status": "ok"}
+
+    @router.post("/webhooks/gmail")
+    def gmail_push_notification(payload: dict[str, Any]) -> dict[str, object]:
+        try:
+            result = pubsub_delivery_handler.handle(payload)
+        except ValueError as error:
+            raise HTTPException(status_code=400, detail="Invalid Gmail notification") from error
+        except Exception as error:
+            raise HTTPException(status_code=502, detail="Gmail history lookup failed") from error
+        print(f"Gmail push notification processed: {result}")
+        return {
+            "accepted": result.accepted,
+            "email_address": result.email_address,
+            "history_id": result.history_id,
+            "message_ids": result.message_ids,
+        }
+
+    return router
