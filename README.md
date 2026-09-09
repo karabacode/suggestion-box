@@ -2,32 +2,46 @@
 
 A small FastAPI service that authenticates to Gmail with OAuth 2.0 and processes Gmail push notifications. It requests only the `gmail.readonly` scope.
 
-## Monorepo Components
+## Repository Structure
 
 ```text
-python/                      FastAPI Gmail backend, tests, and packaging
-chrome-extension/            Manifest V3 popup client
-python/app/services/         Provider-neutral application ports
-python/app/infrastructure/   Gmail and OAuth adapters
-python/schemas/              Buf-managed Protocol Buffer schemas
+python/
+├── app/
+│   ├── infrastructure/
+│   │   ├── auth/             Google OAuth and token-store adapters
+│   │   ├── configuration/    Environment-backed application settings
+│   │   └── gmail/            Gmail API and Pub/Sub adapter
+│   ├── ports/                 FastAPI HTTP routers
+│   │   ├── auth_http.py       Protected OAuth maintenance routes
+│   │   └── http.py            Health and Gmail webhook routes
+│   ├── resources/             Local-only OAuth and maintenance secrets
+│   ├── services/              Provider-neutral contracts and results
+│   └── main.py                Application composition root and startup watch
+├── dev/                       Development utilities, including proto compilation
+├── schemas/                   Buf-managed Protocol Buffer schemas
+├── tests/                     Unit and architecture tests
+├── Dockerfile                 Cloud Run container image definition
+├── requirements.txt           Runtime dependencies
+├── setup.py                   Editable-install package configuration
+└── run_local.sh               Local startup script
 ```
 
 The `python/schemas/buf.yaml` file declares `python/schemas` as the Buf module root. Therefore `python/schemas/email/notifications/v1/new_email.proto` correctly maps to the package `email.notifications.v1`. Run Buf commands from `python/schemas`.
 
 ## Architecture
 
-The backend uses application-owned ports implemented by infrastructure adapters:
+The backend uses provider-neutral service contracts implemented by infrastructure adapters:
 
 ```text
 python/app/
-   domain/          Pure business objects, with no framework or Google imports
-   services/        Provider-neutral ports required by the application
-   infrastructure/ Google OAuth, Gmail, and token-store adapters
+   services/        OAuth, token-store, and Pub/Sub contracts
+   infrastructure/ Google OAuth, Gmail, and configuration adapters
    ports/           FastAPI HTTP routes and response mapping
-   main.py          Composition root that wires adapters to HTTP routes
+   resources/       Local-only secret files, ignored by Git
+   main.py          Composition root and startup Gmail watch registration
 ```
 
-The ports describe capabilities without mentioning Google, Gmail, or FastAPI. `GoogleOAuthAdapter`, `GoogleGmailAdapter`, and `InMemoryTokenStore` implement those contracts. Application services are intentionally absent until there is real bill-processing behavior to coordinate.
+The service contracts describe capabilities without importing Google or FastAPI. `GoogleOAuthAdapter`, `GoogleGmailAdapter`, and `InMemoryTokenStore` implement those contracts. The application is currently focused on Gmail authentication, startup watch registration, Pub/Sub delivery, and Gmail history lookup.
 
 The dependency direction is enforced by `tests/test_architecture.py`. Run it with:
 
@@ -35,7 +49,7 @@ The dependency direction is enforced by `tests/test_architecture.py`. Run it wit
 python -m unittest discover -s tests -v
 ```
 
-That test fails if a developer imports an adapter or web framework into the domain/ports, or if an infrastructure adapter stops implementing its application port. It is suitable for CI and keeps the rule visible in the repository.
+That test fails if a developer introduces forbidden framework or adapter imports into protected application boundaries, or if an infrastructure adapter stops implementing its application contract. It is suitable for CI and keeps the rule visible in the repository.
 
 ## Gmail Push Notifications
 
