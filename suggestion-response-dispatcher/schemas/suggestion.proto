@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package email.notifications.v1;
+
+message EmailMessage {
+  string email_id = 1;
+  string sender_email = 2;
+  string body = 3;
+}
+
+message VibeAnalysis {
+  string primary_vibe = 1; // e.g., "Frustrated", "Enthusiastic", "Skeptical", "Constructive"
+  string urgency_level = 2; // e.g., "Low", "Medium", "High", "Critical"
+  string communication_style = 3; // e.g., "Direct", "Casual", "Formal", "Demanding"
+  repeated string tags = 4; // e.g., ["churn_risk", "power_user", "ui_feedback"]
+}
+
+message SuggestionAnalysis {
+  string email_id = 1;
+  string sender_name = 2;
+  string sender_email = 3;
+  string category = 4; // e.g., "Feature Request", "UI/UX", "Pricing", "Bug Report"
+  string suggested_action = 5; // Summary of what the user wants
+
+  VibeAnalysis vibe = 6; // Emotional breakdown
+
+  string draft_reply = 7;
+  int64 timestamp = 8;
+  EmailMessage original_message = 9;
+}

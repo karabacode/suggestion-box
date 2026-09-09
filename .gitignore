@@ -3,5 +3,9 @@
 __pycache__/
 *.py[cod]
 suggestions-ingester/app/resources/
+suggestion-agent/agent/resources/
+suggestion-response-dispatcher/.env
+suggestion-response-dispatcher/app/resources/
 build/
 *.egg-info/
+suggestions-ingester/schemas/

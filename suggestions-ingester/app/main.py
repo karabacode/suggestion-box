@@ -23,7 +23,13 @@ oauth_client = GoogleOAuthAdapter(
     settings.client_secret_json, settings.scopes, settings.redirect_uri, token_store
 )
 email_publisher = GooglePubSubEmailPublisher(settings.suggestion_agent_topic)
-gmail_adapter = GoogleGmailAdapter(token_store, settings.scopes, email_publisher)
+gmail_adapter = GoogleGmailAdapter(
+    token_store,
+    settings.scopes,
+    email_publisher,
+    settings.duplicate_sender_ttl_seconds,
+    settings.ignored_gmail_labels,
+)
 pubsub_delivery_handler = gmail_adapter
 
 

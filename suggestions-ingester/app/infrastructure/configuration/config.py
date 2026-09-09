@@ -16,6 +16,8 @@ class Settings:
     google_cloud_project: str | None
     suggestion_agent_url: str
     suggestion_agent_topic: str
+    duplicate_sender_ttl_seconds: int
+    ignored_gmail_labels: tuple[str, ...]
 
     @classmethod
     def from_environment(cls) -> "Settings":
@@ -43,6 +45,17 @@ class Settings:
             suggestion_agent_topic=os.getenv(
                 "SUGGESTION_AGENT_TOPIC",
                 "projects/suggestion-box-508020/topics/analysis-request",
+            ),
+            duplicate_sender_ttl_seconds=int(
+                os.getenv("DUPLICATE_SENDER_TTL_SECONDS", "60")
+            ),
+            ignored_gmail_labels=tuple(
+                label.strip().upper()
+                for label in os.getenv(
+                    "IGNORED_GMAIL_LABELS",
+                    "SPAM,TRASH,SENT,CATEGORY_PROMOTIONS,CATEGORY_SOCIAL,CATEGORY_UPDATES,CATEGORY_FORUMS",
+                ).split(",")
+                if label.strip()
             ),
         )
 
