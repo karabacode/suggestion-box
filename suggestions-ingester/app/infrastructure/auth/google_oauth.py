@@ -43,7 +43,6 @@ class GoogleOAuthAdapter(OAuthClient):
             tuple[str, str],
             flow_any.authorization_url(
                 access_type="offline",
-                include_granted_scopes="true",
                 prompt="consent",
             ),
         )
