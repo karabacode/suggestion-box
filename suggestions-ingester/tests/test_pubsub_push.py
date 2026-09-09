@@ -8,6 +8,8 @@ from app.infrastructure.gmail.google_gmail import GoogleGmailAdapter
 class FakeGmailAdapter(GoogleGmailAdapter):
     def __init__(self) -> None:
         self.history_ids: list[str] = []
+        self._email_publisher = None
+        self._history_cursor = None
 
     def list_history(self, history_id: str) -> list[str]:
         self.history_ids.append(history_id)
@@ -30,7 +32,7 @@ class PubSubPushTests(unittest.TestCase):
         self.assertEqual(result.email_address, "user@example.com")
         self.assertEqual(result.history_id, "12345")
         self.assertEqual(result.message_ids, ["message-1"])
-        self.assertEqual(adapter.history_ids, ["12345"])
+        self.assertEqual(adapter.history_ids, ["12344"])
 
     def test_rejects_missing_pubsub_data(self) -> None:
         with self.assertRaisesRegex(ValueError, "data is missing"):

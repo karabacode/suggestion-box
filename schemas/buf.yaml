@@ -1,0 +1,10 @@
+version: v2
+modules:
+  - path: .
+lint:
+  use:
+    - STANDARD
+breaking:
+  use:
+    - FILE
+python -m grpc_tools.protoc -I=schemas --python_out=infrastructure schemas/email/notifications/v1/new_email.proto

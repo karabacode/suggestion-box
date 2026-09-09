@@ -20,6 +20,7 @@ class GoogleOAuthAdapter(OAuthClient):
         self._redirect_uri = redirect_uri
         self._token_store = token_store
         self._state: str | None = None
+        self._code_verifier: str | None = None
 
     def _flow(self, state: str | None = None) -> Flow:
         flow_type = cast(Any, Flow)
@@ -30,6 +31,8 @@ class GoogleOAuthAdapter(OAuthClient):
             scopes=self._scopes,
             redirect_uri=self._redirect_uri,
             state=state,
+            code_verifier=self._code_verifier,
+            autogenerate_code_verifier=self._code_verifier is None,
             ),
         )
 
@@ -45,6 +48,7 @@ class GoogleOAuthAdapter(OAuthClient):
             ),
         )
         self._state = state
+        self._code_verifier = cast(Any, flow).code_verifier
         return url, state
 
     def exchange_code(self, authorization_response: str, state: str) -> dict[str, object]:
@@ -60,4 +64,5 @@ class GoogleOAuthAdapter(OAuthClient):
         token = cast(dict[str, object], json.loads(token_json))
         self._token_store.save(token)
         self._state = None
+        self._code_verifier = None
         return token

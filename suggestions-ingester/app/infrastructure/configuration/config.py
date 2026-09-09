@@ -14,6 +14,8 @@ class Settings:
     scopes: tuple[str, ...]
     pubsub_topic: str | None
     google_cloud_project: str | None
+    suggestion_agent_url: str
+    suggestion_agent_topic: str
 
     @classmethod
     def from_environment(cls) -> "Settings":
@@ -35,6 +37,13 @@ class Settings:
             scopes=("https://www.googleapis.com/auth/gmail.readonly",),
             pubsub_topic=os.getenv("GOOGLE_PUBSUB_TOPIC"),
             google_cloud_project=os.getenv("GOOGLE_CLOUD_PROJECT"),
+            suggestion_agent_url=os.getenv(
+                "SUGGESTION_AGENT_URL", "http://localhost:8090"
+            ),
+            suggestion_agent_topic=os.getenv(
+                "SUGGESTION_AGENT_TOPIC",
+                "projects/suggestion-box-508020/topics/analysis-request",
+            ),
         )
 
 

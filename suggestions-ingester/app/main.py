@@ -1,4 +1,5 @@
 from contextlib import asynccontextmanager
+import logging
 from typing import Any, cast
 
 from fastapi import FastAPI
@@ -8,9 +9,12 @@ from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 from app.infrastructure.auth.google_oauth import GoogleOAuthAdapter
 from app.infrastructure.auth.token_store import InMemoryTokenStore
 from app.infrastructure.configuration.config import Settings
+from app.infrastructure.agent.pubsub_publisher import GooglePubSubEmailPublisher
 from app.infrastructure.gmail.google_gmail import GoogleGmailAdapter
 from app.ports.auth_http import create_auth_router
 from app.ports.http import create_router
+
+logging.basicConfig(level=logging.INFO)
 
 
 settings = Settings.from_environment()
@@ -18,7 +22,8 @@ token_store = InMemoryTokenStore(settings.token_json)
 oauth_client = GoogleOAuthAdapter(
     settings.client_secret_json, settings.scopes, settings.redirect_uri, token_store
 )
-gmail_adapter = GoogleGmailAdapter(token_store, settings.scopes)
+email_publisher = GooglePubSubEmailPublisher(settings.suggestion_agent_topic)
+gmail_adapter = GoogleGmailAdapter(token_store, settings.scopes, email_publisher)
 pubsub_delivery_handler = gmail_adapter
 
 
