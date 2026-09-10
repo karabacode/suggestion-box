@@ -60,7 +60,11 @@ class GoogleGmailAdapter(PushHandler):
         return build_service("gmail", "v1", credentials=credentials, cache_discovery=False)
 
     def start_watch(self, topic_name: str) -> dict[str, object]:
-        watch = (
+        # Do not use this historyId as the dedup cursor: watch() can be called
+        # after a new message already arrived (e.g. cold start triggered by its
+        # own notification), which would make that message's notification look
+        # stale and get it discarded. The cursor is only advanced in handle().
+        return (
             self._service()
             .users()
             .watch(
@@ -69,10 +73,6 @@ class GoogleGmailAdapter(PushHandler):
             )
             .execute()
         )
-        history_id = watch.get("historyId")
-        if isinstance(history_id, str):
-            self._history_cursor = history_id
-        return watch
 
     def list_history(self, history_id: str) -> list[str]:
         response = cast(
