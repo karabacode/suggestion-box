@@ -1,0 +1,8 @@
+syntax = "proto3";
+package suggestion.v1;
+
+message SubmitSuggestionDto {
+  string sender = 1;
+  string body = 2;
+  string external_reference = 3;
+}

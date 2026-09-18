@@ -1,0 +1,79 @@
+gcp_project_id = "<project-id>"
+gcp_region     = "<google-cloud-region>"
+runtime_service_account_id = "<service-account-id>"
+
+images = {
+  ingester   = "<image-location>"
+  core       = "<image-location>"
+  agent      = "<image-location>"
+  dispatcher = "<image-location>"
+}
+
+secret_ids = {
+  google_client_secret = "google-client-secret"
+  gmail_read_token     = "gmail-lewis-secret"
+  gmail_send_token     = "gmail-send-token"
+  maintenance_password = "maintenance-password"
+  model_api_key        = "model-api-key"
+}
+
+secret_values = {
+  google_client_secret_json = "{
+                                  "web": {
+                                    "client_id": "client-id",
+                                    "project_id": "google-cloud-project-id",
+                                    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                                    "token_uri": "https://oauth2.googleapis.com/token",
+                                    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+                                    "client_secret": "<client-secert>",
+                                    "redirect_uris": [
+                                      "<service-host/auth/callback>"
+                                    ],
+                                    "javascript_origins": [
+                                      "<service-host>"
+                                    ]
+                                  }
+                                }"
+  gmail_read_token_json     = "{
+                                  "token": "<token-read>",
+                                  "refresh_token": "<refresh-token>",
+                                  "token_uri": "https://oauth2.googleapis.com/token",
+                                  "client_id": "<client_id>",
+                                  "client_secret": "<clietn-secret>",
+                                  "scopes": [
+                                    "https://www.googleapis.com/auth/gmail.readonly"
+                                  ]
+                                }"
+  gmail_send_token_json     = "{
+                                  "token": "<token-send>",
+                                  "refresh_token": "<refresh-token>",
+                                  "token_uri": "https://oauth2.googleapis.com/token",
+                                  "client_id": "<client_id>",
+                                  "client_secret": "<slient-secret>",
+                                  "scopes": [
+                                    "https://www.googleapis.com/auth/gmail.send"
+                                  ]
+                                }"
+  maintenance_password      = "<password-maintenance-user>"
+  model_api_key             = "<model_api_key>"
+}
+
+gmail_account_email = "lewisvcohen@gmail.com"
+
+cloudflare_account_id     = "<cloud-flare-account-id>"
+cloudflare_api_token      = "<api-token>"
+cloudflare_secret_id      = "cloudflare-api-token"
+cloudflare_d1_database_name = "<database-name>"
+
+oauth_redirect_uris = {
+  ingester   = "<service-host>/auth/callback"
+  dispatcher = "<service-host>/auth/callback"
+}
+
+maintenance_user = "maintenance"
+
+scope_read = "[\"https://www.googleapis.com/auth/gmail.readonly\"]"
+
+ignored_emails_labels = "[\"SPAM\",\"TRASH\",\"SENT\",\"CATEGORY_PROMOTIONS\",\"CATEGORY_SOCIAL\",\"CATEGORY_UPDATES\",\"CATEGORY_FORUMS\"]"
+
+github_repository = "<username/reponame>"

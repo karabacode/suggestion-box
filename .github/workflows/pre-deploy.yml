@@ -1,0 +1,64 @@
+name: Pre-Deploy Cloud Run
+
+on:
+  workflow_call:
+    inputs:
+      service_name:
+        required: true
+        type: string
+      service_dir:
+        required: true
+        type: string
+      env_vars:
+        required: false
+        type: string
+        default: ''
+      secrets:
+        required: false
+        type: string
+        default: ''
+      flags:
+        required: false
+        type: string
+        default: ''
+
+# ADD THIS BLOCK TO GRANT OIDC TOKEN ACCESS
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  REGION: northamerica-northeast1
+  REGISTRY: northamerica-northeast1-docker.pkg.dev/suggestion-box-508020/cloud-run-source-deploy
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud (WIF)
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_SA_EMAIL }}
+
+      - name: Authenticate Docker to Artifact Registry
+        run: gcloud auth configure-docker northamerica-northeast1-docker.pkg.dev
+
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t ${{ env.REGISTRY }}/${{ inputs.service_name }}:${{ github.sha }} -f ./${{ inputs.service_dir }}/Dockerfile suggestion-box-processor
+          docker push ${{ env.REGISTRY }}/${{ inputs.service_name }}:${{ github.sha }}
+
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: ${{ inputs.service_name }}
+          region: ${{ env.REGION }}
+          image: ${{ env.REGISTRY }}/${{ inputs.service_name }}:${{ github.sha }}
+          env_vars: ${{ inputs.env_vars }}
+          secrets: ${{ inputs.secrets }}
+          flags: ${{ inputs.flags }}

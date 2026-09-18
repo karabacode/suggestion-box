@@ -2,10 +2,40 @@
 .venv/
 __pycache__/
 *.py[cod]
-suggestions-ingester/app/resources/
-suggestion-agent/agent/resources/
-suggestion-response-dispatcher/.env
-suggestion-response-dispatcher/app/resources/
 build/
 *.egg-info/
-suggestions-ingester/schemas/
+
+# Python backend secrets and generated files
+suggestion-box-processor/.env
+suggestion-box-processor/.venv/
+suggestion-box-processor/suggestions-ingester/app/resources/
+suggestion-box-processor/suggestion-agent/agent/resources/
+suggestion-box-processor/suggestion-response-dispatcher/.env
+suggestion-box-processor/suggestion-response-dispatcher/app/resources/
+suggestion-box-processor/suggestion-ingester/schemas/
+suggestion-box-processor/suggestion-agent/schemas/
+suggestion-box-processor/suggestion-core/schemas/
+suggestion-box-processor/suggestion-response-dispatcher/schemas/
+
+# Terraform state, providers, plans, and local variable files
+infra/terraform/.terraform/
+infra/terraform/*.tfvars
+infra/terraform/*.tfstate
+infra/terraform/*.tfstate.*
+infra/terraform/*.tfplan
+infra/terraform/crash.log
+
+# Frontend dependencies and build output
+node_modules/
+dist/
+.next/
+
+infra/terraform/plans/
+infra/terraform/.terraform.lock.hcl
+suggestion-box-processor/schemas/v1/*_pb2.py
+suggestion-box-processor/schemas/v1/*_p2p.py
+suggestion-box-processor/schemas/v1/*_pb2.pyi
+suggestion-box-processor/gmail-suggestion-ingester/app/schemas/
+suggestion-box-processor/suggestion-core/app/schemas/
+suggestion-box-processor/suggestion-agent/app/schemas/
+suggestion-box-processor/suggestion-response-dispatcher/app/schemas/

@@ -1,5 +1,5 @@
 ---
-applyTo: "suggestions-ingester/**/*.py"
+applyTo: "suggestion-box-processor/suggestions-ingester/**/*.py"
 ---
 
 # Python Endpoint Instructions

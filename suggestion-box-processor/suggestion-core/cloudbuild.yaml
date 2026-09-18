@@ -1,0 +1,11 @@
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - --tag
+      - ${_IMAGE}
+      - --file
+      - suggestion-core/Dockerfile
+      - .
+images:
+  - ${_IMAGE}

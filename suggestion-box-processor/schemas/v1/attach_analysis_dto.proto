@@ -1,0 +1,15 @@
+syntax = "proto3";
+package analisys.v1;
+
+message AttachAnalysisDto {
+  string suggestion_id = 1;
+  string ai_model = 2;
+  string agent_version = 3;
+  string vibe = 4;
+  string urgency_level = 5;
+  string communication_style = 6;
+  repeated string tags = 7;
+  string category = 8;
+  string suggested_action = 9;
+  string draft_reply = 10;
+}

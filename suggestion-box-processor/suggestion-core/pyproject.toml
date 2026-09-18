@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "suggestion-core"
+version = "0.1.0"
+description = "Owns the Suggestion domain and lifecycle"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi==0.115.12",
+    "protobuf",
+    "uvicorn[standard]==0.34.2",
+]
+
+[tool.setuptools.packages.find]
+include = ["app*", "schemas*"]
+
+# pytest.ini
+[tool.pytest.ini_options]
+markers = [
+    "unit: Core unit tests with isolated logic and mock dependencies."
+]
