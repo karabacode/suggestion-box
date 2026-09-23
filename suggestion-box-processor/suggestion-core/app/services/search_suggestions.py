@@ -8,6 +8,6 @@ class SearchSuggestions:
            suggestionRepository: Annotated[SuggestionRepository, Depends(get_suggestion_repository)]
        ):
            self.suggestion_repository = suggestionRepository
-    async def search(self, query: str):
+    def search(self, query: str):
         # Placeholder implementation, replace with actual search logic
-        return await self.suggestion_repository.search()
+        return self.suggestion_repository.search()

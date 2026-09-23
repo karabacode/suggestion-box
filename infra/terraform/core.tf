@@ -3,7 +3,7 @@ resource "google_cloud_run_v2_service" "core" {
   project  = local.project_id
   location = local.region
   deletion_protection = false
-  ingress  = "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"
+  ingress  = "INGRESS_TRAFFIC_ALL"
 
   template {
     service_account                  = google_service_account.runtime.email
@@ -24,15 +24,6 @@ resource "google_cloud_run_v2_service" "core" {
           memory = "512Mi"
         }
         startup_cpu_boost = true
-      }
-
-      env {
-        name  = "SUGGESTION_AGENT_URL"
-        value = google_cloud_run_v2_service.agent.uri
-      }
-      env {
-        name  = "SUGGESTION_RESPONSE_DISPATCHER_URL"
-        value = google_cloud_run_v2_service.dispatcher.uri
       }
       env {
         name  = "CLOUDFLARE_ACCOUNT_ID"

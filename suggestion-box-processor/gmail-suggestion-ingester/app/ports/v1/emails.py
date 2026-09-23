@@ -12,7 +12,7 @@ logger = getLogger(__name__)
 router = APIRouter(prefix="/v1/emails", tags=["Suggestions"])
 
 """
-Email ingestion endpoint for Gmail push notifications.
+Email ingestion endpoint for Gmail push notifications with protobuf.
 """
 @router.post("/", status_code=201)
 def ingest_email(
@@ -24,4 +24,6 @@ def ingest_email(
     notification = payload.message.decode_gmail_data()
     notifications = googleGmailAdapter.handle(notification)
     logger.info("Processed notification %s", notifications)
+    for notification in notifications:
+        publisher.publish(notification)
     return JSONResponse(content={"accepted": True})

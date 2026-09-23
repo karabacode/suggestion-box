@@ -4,6 +4,7 @@ locals {
 
   topic_names = {
     gmail_notifications = "new-email"
+    new-suggestion      = "new-suggestion"
     analysis_requests   = "analysis-request"
     analysis_results    = "suggestion-analysis"
   }

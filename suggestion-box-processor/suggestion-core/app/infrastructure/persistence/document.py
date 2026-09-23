@@ -11,7 +11,9 @@ class MessageDocument(BaseModel):
     sender: str
     body: str
 
-
+"""
+Status
+"""
 class StatusDocument(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

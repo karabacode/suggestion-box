@@ -43,6 +43,10 @@ resource "google_cloud_run_v2_service" "ingester" {
         value = google_pubsub_topic.topic["gmail_notifications"].id
       }
       env {
+        name  = "CORE_TOPIC"
+        value = google_pubsub_topic.topic["new-suggestion"].id
+      }
+      env {
         name  = "MAINTENANCE_USERNAME"
         value = var.maintenance_user
       }

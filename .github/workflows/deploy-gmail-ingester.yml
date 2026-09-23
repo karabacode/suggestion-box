@@ -24,6 +24,7 @@ jobs:
         REDIRECT_URI=https://gmail-suggestion-ingester-318780185428.northamerica-northeast1.run.app/v1/auth/callback
         SCOPES=["https://www.googleapis.com/auth/gmail.readonly"]
         PUBSUB_TOPIC=projects/suggestion-box-508020/topics/new-email
+        CORE_TOPIC=projects/suggestion-box-508020/topics/new-suggestion
         MAINTENANCE_USERNAME=maintenance
         DUPLICATE_SENDER_TTL_SECONDS=60
         IGNORED_GMAIL_LABELS=["SPAM"\,"TRASH"\,"SENT"\,"CATEGORY_PROMOTIONS"\,"CATEGORY_SOCIAL"\,"CATEGORY_UPDATES"\,"CATEGORY_FORUMS"]

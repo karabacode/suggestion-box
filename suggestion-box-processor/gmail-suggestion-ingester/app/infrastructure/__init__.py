@@ -40,7 +40,7 @@ def get_gmail_adapter():
 def get_pubsub_email_publisher():
     if not settings.pubsub_topic:
         raise RuntimeError("PUBSUB_TOPIC is required")
-    return PubSubEmailPublisher(settings.pubsub_topic)
+    return PubSubEmailPublisher(settings.core_topic)
 
 
 

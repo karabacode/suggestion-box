@@ -16,16 +16,16 @@ class InMemorySuggestionRepository(SuggestionRepository):
         self._lock = Lock()
         self._logger = logging.getLogger(__name__)
 
-    async def save(self, suggestion: Suggestion) -> Suggestion:
+    def save(self, suggestion: Suggestion) -> Suggestion:
         with self._lock:
             self._by_id[suggestion.id] = suggestion
         self._logger.info("Saved suggestion with ID %s", suggestion.id)
         return suggestion
 
-    async def find_by_id(self, suggestion_id: UUID) -> Optional[Suggestion]:
+    def find_by_id(self, suggestion_id: UUID) -> Optional[Suggestion]:
         with self._lock:
             return self._by_id.get(suggestion_id)
 
-    async def search(self) -> list[Suggestion]:
+    def search(self) -> list[Suggestion]:
         with self._lock:
             return list(self._by_id.values())

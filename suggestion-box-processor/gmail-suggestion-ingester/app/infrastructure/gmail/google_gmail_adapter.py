@@ -78,10 +78,11 @@ class GoogleGmailAdapter:
             sender,
             len(body),
         )
-        return SubmitSuggestionDto(
-            sender=sender,
-            body=body,
-            external_reference=message_id)
+        return SubmitSuggestionDto.model_validate({
+            "sender": sender,
+            "body": body,
+            "external_reference": message_id
+        })
 
     def _message_body(self, payload: dict[str, Any]) -> str:
         body_data = payload.get("body", {}).get("data")

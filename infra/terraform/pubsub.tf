@@ -30,6 +30,29 @@ resource "google_pubsub_subscription" "gmail_to_ingester" {
   }
 }
 
+resource "google_pubsub_subscription" "ingester_to_core" {
+  name    = "new-suggestion-sub"
+  project = local.project_id
+  topic   = google_pubsub_topic.topic["new-suggestion"].id
+
+  ack_deadline_seconds       = 30
+  message_retention_duration = "604800s"
+
+  push_config {
+    push_endpoint = "${google_cloud_run_v2_service.core.uri}/v1/suggestions/"
+
+    # Enables Push Payload Unwrapping
+    no_wrapper {
+      write_metadata = false
+    }
+
+    oidc_token {
+      service_account_email = google_service_account.runtime.email
+      audience              = google_cloud_run_v2_service.core.uri
+    }
+  }
+}
+
 resource "google_pubsub_subscription" "analysis_to_agent" {
   name    = "analysis-request-push"
   project = local.project_id
@@ -40,6 +63,12 @@ resource "google_pubsub_subscription" "analysis_to_agent" {
 
   push_config {
     push_endpoint = "${google_cloud_run_v2_service.agent.uri}/webhooks/pubsub"
+
+    # Enables Push Payload Unwrapping
+    no_wrapper {
+      write_metadata = false
+    }
+
     oidc_token {
       service_account_email = google_service_account.runtime.email
       audience              = google_cloud_run_v2_service.agent.uri
@@ -57,6 +86,12 @@ resource "google_pubsub_subscription" "analysis_to_core" {
 
   push_config {
     push_endpoint = "${google_cloud_run_v2_service.core.uri}/webhooks/suggestion-analysis"
+
+    # Enables Push Payload Unwrapping
+    no_wrapper {
+      write_metadata = false
+    }
+
     oidc_token {
       service_account_email = google_service_account.runtime.email
       audience              = google_cloud_run_v2_service.core.uri

@@ -2,14 +2,23 @@ syntax = "proto3";
 package analisys.v1;
 
 message AttachAnalysisDto {
+  // p2p: {"alias": "suggestionId"}
   string suggestion_id = 1;
+  // p2p: {"alias": "aiModel"}
   string ai_model = 2;
+  // p2p: {"alias": "agentVersion"}
   string agent_version = 3;
+  // p2p: {"alias": "vibe"}
   string vibe = 4;
+  // p2p: {"alias": "urgencyLevel"}
   string urgency_level = 5;
+  // p2p: {"alias": "communicationStyle"}
   string communication_style = 6;
   repeated string tags = 7;
+  // p2p: {"alias": "category"}
   string category = 8;
+  // p2p: {"alias": "suggestedAction"}
   string suggested_action = 9;
+  // p2p: {"alias": "draftReply"}
   string draft_reply = 10;
 }

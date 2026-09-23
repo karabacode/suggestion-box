@@ -1,0 +1,24 @@
+name: Deploy Suggestion Box Core
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'suggestion-box-processor/suggestion-core/**'
+      - '.github/workflows/deploy-core.yml'
+      - '.github/workflows/pre-deploy.yml'
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  call-pre-deploy:
+    uses: ./.github/workflows/pre-deploy.yml
+    with:
+      service_name: suggestion-core
+      service_dir: suggestion-box-processor/suggestion-core
+      flags: --allow-unauthenticated
+    secrets: inherit
+    

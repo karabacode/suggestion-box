@@ -17,7 +17,7 @@ class AttachAnalysis:
         self.suggestion_repository = suggestionRepository
 
     async def apply(self, suggestion_id: UUID, analysis: Analysis) -> Suggestion:
-        suggestion = await self.suggestion_repository.find_by_id(suggestion_id)
+        suggestion =  await self.suggestion_repository.find_by_id(suggestion_id)
         if suggestion is None:
             raise KeyError(f"No suggestion found for suggestion_id={suggestion_id}")
 
